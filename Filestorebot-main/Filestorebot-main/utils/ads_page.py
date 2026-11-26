@@ -11,7 +11,7 @@ PAGE = r"""<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0a0107">
-<title>Unlock your files</title>
+<title>DESI DESIRES - Unlock your files</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@ PAGE = r"""<!doctype html>
     padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
   .crown{font-size:30px;filter:drop-shadow(0 0 12px var(--pink));margin-bottom:-4px;animation:flick 5s infinite}
   @keyframes flick{0%,100%{opacity:1}46%{opacity:1}48%{opacity:.55}50%{opacity:1}52%{opacity:.7}54%{opacity:1}}
-  .ringwrap{width:104px;height:104px;border-radius:50%;padding:4px;margin:8px 0 16px;
+  .ringwrap{width:104px;height:104px;border-radius:50%;padding:4px;margin:6px 0 10px;
     background:conic-gradient(from var(--a),#ff2d95,#ffd1ee,#b400ff,#ff2d95,#ff7ccf,#ff2d95);
     animation:spin 5s linear infinite,glow 3s ease-in-out infinite;
     box-shadow:0 0 22px 4px rgba(255,45,149,.65),0 0 60px 12px rgba(255,45,149,.35)}
@@ -41,6 +41,10 @@ PAGE = r"""<!doctype html>
   @keyframes glow{50%{box-shadow:0 0 34px 8px rgba(255,45,149,.9),0 0 90px 20px rgba(255,45,149,.45)}}
   .ring{width:100%;height:100%;border-radius:50%;overflow:hidden;background:#000;border:3px solid #12020b}
   .ring img{width:100%;height:100%;object-fit:cover;display:block}
+  .brand{margin:0 0 14px;font-family:Pacifico,"Brush Script MT",cursive;font-weight:400;font-size:1.55rem;line-height:1.15;text-align:center}
+  .brand .a{color:#fff;text-shadow:0 0 18px rgba(255,255,255,.35)}
+  .brand .b{color:transparent;background:linear-gradient(100deg,#ff2d95 20%,#fff 45%,#ff2d95 55%,#ff1f6e 80%);background-size:250% 100%;
+    -webkit-background-clip:text;background-clip:text;animation:shine 3.6s linear infinite;filter:drop-shadow(0 0 12px rgba(255,45,149,.85))}
   .card{position:relative;width:100%;max-width:380px;padding:26px 22px 24px;text-align:center;border-radius:24px;
     background:rgba(255,45,149,.09);border:1px solid rgba(255,124,207,.4);
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -93,7 +97,8 @@ PAGE = r"""<!doctype html>
 </div>
 <main>
   <div class="crown">👑</div>
-  <div class="ringwrap"><div class="ring"><img src="/assets/home-image" alt="" width="104" height="104" onerror="this.parentNode.parentNode.style.display='none'"></div></div>
+  <div class="ringwrap"><div class="ring"><img src="https://i.ibb.co/VW6GNYVJ/Casual-Blue-Bedroom-Portrait.png" alt="Casual-Blue-Bedroom-Portrait" width="104" height="104" onerror="this.parentNode.parentNode.style.display='none'"></div></div>
+  <div class="brand"><span class="a">DESI</span> <span class="b">DESIRES</span></div>
   <div class="card">
     <div class="icon" id="icon">⏳</div>
     <h1 id="title">Please wait…</h1>
