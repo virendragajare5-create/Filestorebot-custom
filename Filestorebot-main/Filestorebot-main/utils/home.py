@@ -5,10 +5,10 @@ utils/home.py - landing page served at https://<your-domain>/
   * link    : the button opens your bot (t.me/<bot username>) automatically.
               Set HOME_LINK in .env to point it somewhere else (e.g. your channel).
   * texts   : HOME_TITLE, HOME_TEXT, HOME_BUTTON in .env (all optional)
-  * channels: the 5 buttons below the main button. Link for each channel is taken from (in this order)
-              1) HOME_CHANNELS in .env:  Pookie Hub=https://t.me/xxx;Lust Corner=https://t.me/yyy;...
+  * channels: the 4 buttons below the main button. Link for each channel is taken from (in this order)
+              1) HOME_CHANNELS in .env:  Premium Content=https://t.me/xxx;Viral Insta=https://t.me/yyy;...
               2) a Force-Sub channel in the panel with the SAME name (its join link is reused)
-              3) your bot link (fallback, so a button is never dead)
+              3) the default channel URL configured in CHANNELS (or bot link fallback)
   * theme   : neon pink / dark, round image with glowing ring, floating hearts + sparkles, rotating neon ring, shimmer title
 """
 import html
@@ -37,8 +37,16 @@ def _link(bot) -> str:
     return f"https://t.me/{bot.username}" if bot and getattr(bot, "username", None) else "#"
 
 
-CHANNELS = [("Pookie Hub", "🎀"), ("Lust Corner", "🔥"), ("Desi Hub", "🌶"), ("Premium Hub", "💎"),
-            ("Trending Reels", "🎬")]
+LOGO_LINK = "https://ibb.co/SXSgxwN5"
+LOGO_IMAGE = "https://i.ibb.co/VW6GNYVJ/Casual-Blue-Bedroom-Portrait.png"
+LOGO_ALT = "Casual-Blue-Bedroom-Portrait"
+
+CHANNELS = [
+    ("Premium Content", "💎", "https://t.me/+Xdo8_FlebARlNWJl"),
+    ("Viral Insta", "🔥", "https://t.me/+TUdhlxBUqK9kM2Zl"),
+    ("Direct Desi Videos", "🎬", "https://t.me/+t3ZdO3h2YL9iYjY9"),
+    ("Direct Videshi Videos", "✨", "https://t.me/+JAnu-zmle0w2NTE9"),
+]
 
 
 def _channel_links() -> dict:
@@ -67,24 +75,27 @@ async def image(request: web.Request) -> web.StreamResponse:
 
 
 async def page(request: web.Request) -> web.Response:
-    title = os.getenv("HOME_TITLE", "Desi Baddie").strip() or "Desi Baddie"
+    title = os.getenv("HOME_TITLE", "DESI DESIRES").strip() or "DESI DESIRES"
     first, _, rest = title.partition(" ")
     t1, t2 = html.escape(first), html.escape(rest)
     text = html.escape(os.getenv("HOME_TEXT", "Come closer... your private collection is just one tap away."))
     button = html.escape(os.getenv("HOME_BUTTON", "Unlock on Telegram"))
     link = html.escape(_link(request.app.get("bot")), quote=True)
-    has_img = _image()[0] is not None
-    img_tag = ('<div class="ringwrap"><div class="ring"><img src="/assets/home-image" alt="" width="420" height="420">'
-               '</div></div>') if has_img else ""
-    og = (f'<meta property="og:image" content="{html.escape(config.BASE_URL, quote=True)}/assets/home-image">'
-          if has_img and config.BASE_URL else "")
+    img_tag = (
+        '<div class="ringwrap"><div class="ring">'
+        f'<a href="{html.escape(LOGO_LINK, quote=True)}" target="_blank" rel="noopener noreferrer">'
+        f'<img src="{html.escape(LOGO_IMAGE, quote=True)}" alt="{html.escape(LOGO_ALT, quote=True)}" '
+        'width="420" height="420" border="0"></a></div></div>'
+    )
+    og = f'<meta property="og:image" content="{html.escape(LOGO_IMAGE, quote=True)}">'
     plane = ('<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#fff" '
              'd="M21.9 3.6 2.8 10.9c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 1.9 5.8c.2.6.1.8.7.8.4 0 .6-.2.9-.5l2.3-2.3 4.8 3.5'
              'c.9.5 1.5.2 1.7-.8l3.2-15.1c.3-1.2-.5-1.8-1.4-1.4ZM8.5 13.6l9.9-6.2c.5-.3.9-.1.5.2l-8.1 7.3-.3 3.3-2-4.6Z"/></svg>')
     links = _channel_links()
     chans = "".join(
-        f'<a class="ch" href="{html.escape(links.get(n.lower()) or _link(request.app.get("bot")), quote=True)}" '
-        f'target="_blank" rel="noopener"><em>{ico}</em><span>{html.escape(n)}</span></a>' for n, ico in CHANNELS)
+        f'<a class="ch" href="{html.escape(links.get(n.lower()) or default_url or _link(request.app.get("bot")), quote=True)}" '
+        f'target="_blank" rel="noopener noreferrer"><em>{ico}</em><span>{html.escape(n)}</span></a>'
+        for n, ico, default_url in CHANNELS)
     glyphs = ["♥", "✦", "💋", "♥", "✦", "♥", "💋", "✦", "♥"]
     stars = "".join(f'<i style="left:{x}%;animation-delay:{d}s;animation-duration:{t}s;font-size:{z}px">{g}</i>'
                     for (x, d, t, z), g in zip([(6, 0, 11, 16), (18, 3, 14, 13), (30, 6, 12, 18), (44, 1, 15, 14),
@@ -123,6 +134,7 @@ box-shadow:0 0 30px 6px rgba(255,45,149,.65),0 0 80px 18px rgba(255,45,149,.35)}
 @keyframes spin{{to{{--a:360deg}}}}
 @keyframes glow{{50%{{box-shadow:0 0 46px 12px rgba(255,45,149,.9),0 0 110px 28px rgba(255,45,149,.45)}}}}
 .ring{{width:100%;height:100%;border-radius:50%;overflow:hidden;background:#000;border:3px solid #12020b}}
+.ring a{{display:block;width:100%;height:100%}}
 .ring img{{width:100%;height:100%;object-fit:cover;display:block}}
 h1{{margin:0;font-family:Pacifico,"Brush Script MT",cursive;font-weight:400;font-size:clamp(2.7rem,13.5vw,3.8rem);line-height:1.08}}
 h1 .a{{display:block;color:#fff;text-shadow:0 0 22px rgba(255,255,255,.35)}}
@@ -143,13 +155,14 @@ transform:skewX(-20deg);animation:sweep 3s ease-in-out infinite}}
 .btn svg{{position:relative;z-index:1}}.btn span{{position:relative;z-index:1}}
 @keyframes pulse{{50%{{transform:scale(1.03)}}}}
 h2{{margin:28px 0 12px;font-family:Pacifico,cursive;font-weight:400;font-size:1.45rem;color:#fff;text-shadow:0 0 16px rgba(255,45,149,.9)}}
-.chs{{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}}
-.chs .ch:last-child{{grid-column:1/-1}}
-.ch{{display:flex;align-items:center;justify-content:center;gap:9px;padding:15px 10px;border-radius:16px;color:#fff;text-decoration:none;font-weight:700;
-font-size:.98rem;background:linear-gradient(160deg,rgba(255,45,149,.2),rgba(122,11,60,.35));border:1.5px solid rgba(255,124,207,.6);
-box-shadow:0 0 16px rgba(255,45,149,.35),0 0 14px rgba(255,45,149,.2) inset;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}}
-.ch em{{font-style:normal;font-size:1.25rem;filter:drop-shadow(0 0 6px rgba(255,45,149,.9))}}
+.chs{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%}}
+.ch{{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 12px;border-radius:16px;color:#fff;text-decoration:none;font-weight:700;
+font-size:.95rem;line-height:1.25;text-align:center;background:linear-gradient(160deg,rgba(255,45,149,.2),rgba(122,11,60,.35));border:1.5px solid rgba(255,124,207,.6);
+box-shadow:0 0 16px rgba(255,45,149,.35),0 0 14px rgba(255,45,149,.2) inset;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:transform .18s ease,box-shadow .18s ease}}
+.ch:hover{{transform:translateY(-2px);box-shadow:0 0 24px rgba(255,45,149,.6),0 0 16px rgba(255,45,149,.25) inset}}
+.ch em{{font-style:normal;font-size:1.2rem;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,45,149,.9))}}
 .ch:active{{transform:scale(.97);box-shadow:0 0 24px rgba(255,45,149,.7)}}
+@media (max-width:380px){{.chs{{grid-template-columns:1fr}}}}
 .on{{margin-top:16px;color:var(--pink2);font-family:Pacifico,cursive;font-size:1.2rem;text-shadow:0 0 14px rgba(255,45,149,.8)}}
 .on b{{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3dff8b;margin-right:8px;box-shadow:0 0 10px #3dff8b;animation:blink 1.6s infinite}}
 @keyframes blink{{50%{{opacity:.35}}}}
